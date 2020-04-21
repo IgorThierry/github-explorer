@@ -1,5 +1,14 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
+
+const rotate = keyframes`
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(360deg);
+  }
+`;
 
 export const Title = styled.h1`
   font-size: 48px;
@@ -40,6 +49,10 @@ export const Form = styled.form`
     &:hover {
       background: ${shade(0.2, '#04d361')};
     }
+
+    svg {
+      animation: ${rotate} 2s linear infinite;
+    }
   }
 `;
 
@@ -74,7 +87,9 @@ export const Repositories = styled.div`
     }
 
     div {
-      margin-left: 16px;
+      margin: 0 16px;
+      flex: 1;
+
       strong {
         font-size: 20px;
         color: #3d3d4d;
