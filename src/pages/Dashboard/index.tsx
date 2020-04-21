@@ -23,11 +23,16 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log('effect');
+    const localRepos = localStorage.getItem('repositories');
+
+    if (localRepos) {
+      const repos = JSON.parse(localRepos);
+      setRepositories(repos);
+    }
   }, []);
 
   useEffect(() => {
-    console.log('effect repos');
+    localStorage.setItem('repositories', JSON.stringify(repositories));
   }, [repositories]);
 
   async function handleAddRepository(
