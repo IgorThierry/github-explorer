@@ -6,7 +6,7 @@ import { FaSpinner } from 'react-icons/fa';
 import api from '../../services/api';
 
 import logoImg from '../../assets/logo.svg';
-import { Title, Form, Repositories } from './styles';
+import { Title, Form, Repositories, Error } from './styles';
 
 interface Repository {
   full_name: string;
@@ -20,6 +20,7 @@ interface Repository {
 const Dashboard: React.FC = () => {
   const [newRepo, setNewRepo] = useState('');
   const [repositories, setRepositories] = useState<Repository[]>([]);
+  const [inputError, setInputError] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -39,6 +40,12 @@ const Dashboard: React.FC = () => {
     event: FormEvent<HTMLFormElement>,
   ): Promise<void> {
     event.preventDefault();
+
+    if (!newRepo) {
+      setInputError('Digite o autor/nome do repositório');
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await api.get<Repository>(`/repos/${newRepo}`);
@@ -48,8 +55,9 @@ const Dashboard: React.FC = () => {
       setRepositories([...repositories, repository]);
 
       setNewRepo('');
+      setInputError('');
     } catch (error) {
-      console.log(error);
+      setInputError('Erro na busca por esse repositório');
     } finally {
       setLoading(false);
     }
@@ -59,7 +67,7 @@ const Dashboard: React.FC = () => {
     <>
       <img src={logoImg} alt="Github Explorer" />
       <Title>Explore repositórios no Github</Title>
-      <Form onSubmit={handleAddRepository}>
+      <Form hasError={!!inputError} onSubmit={handleAddRepository}>
         <input
           placeholder="Digite o nome do repositório"
           value={newRepo}
@@ -69,6 +77,9 @@ const Dashboard: React.FC = () => {
           {loading ? <FaSpinner color="#FFF" size="30" /> : 'Pesquisar'}
         </button>
       </Form>
+
+      {inputError && <Error>{inputError}</Error>}
+
       <Repositories>
         {repositories.map((repository) => (
           <a key={repository.full_name} href="teste">
